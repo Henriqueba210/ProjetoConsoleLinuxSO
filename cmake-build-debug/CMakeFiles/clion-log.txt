@@ -1,5 +1,5 @@
-/snap/clion/88/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/henrique/Documentos/GitHub/ProjetoConsoleLinuxSO
--- The C compiler identification is GNU 9.2.1
+C:\Users\henri\.CLion2019.2\system\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /cygdrive/c/Projetos/ProjetoConsoleLinuxSO
+-- The C compiler identification is GNU 7.4.0
 -- Check for working C compiler: /usr/bin/cc
 -- Check for working C compiler: /usr/bin/cc -- works
 -- Detecting C compiler ABI info
@@ -8,4 +8,4 @@
 -- Detecting C compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/henrique/Documentos/GitHub/ProjetoConsoleLinuxSO/cmake-build-debug
+-- Build files have been written to: /cygdrive/c/Projetos/ProjetoConsoleLinuxSO/cmake-build-debug
