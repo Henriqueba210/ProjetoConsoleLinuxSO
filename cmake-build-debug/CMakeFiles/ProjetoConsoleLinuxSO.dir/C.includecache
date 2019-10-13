@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/henrique/Documentos/GitHub/ProjetoConsoleLinuxSO/main.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+

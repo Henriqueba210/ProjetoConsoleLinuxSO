@@ -1,0 +1,3 @@
+/home/henrique/Documentos/GitHub/ProjetoConsoleLinuxSO/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/henrique/Documentos/GitHub/ProjetoConsoleLinuxSO/cmake-build-debug/CMakeFiles/ProjetoConsoleLinuxSO.dir
+/home/henrique/Documentos/GitHub/ProjetoConsoleLinuxSO/cmake-build-debug/CMakeFiles/edit_cache.dir
