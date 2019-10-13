@@ -11,17 +11,25 @@ Lucas Abrahão
 char LinhaDeComando[80];
 char *comando, *parametro;
 
-void teste(char *funcao)
+void mkdir(char *parameter) {
+    if (parameter) {
+
+    }
+}
+
+void comandos(char *funcao, char *parametro)
 {
     if(strcmp(funcao, "mkdir") == 0)
     {
-        printf("teste4");
+        mkdir(parametro);
+
     }else{
 
     }
 
 
 }
+
 
 int main()
 {
@@ -33,9 +41,9 @@ int main()
 
     comando = strtok(LinhaDeComando, "");
     parametro = strtok(NULL, "\0");
-    teste(parametro);
     printf("Comando = %s \n", comando);
     printf("Parametro = %s \n", parametro);
+    comandos(comando, parametro);
 
 
 
