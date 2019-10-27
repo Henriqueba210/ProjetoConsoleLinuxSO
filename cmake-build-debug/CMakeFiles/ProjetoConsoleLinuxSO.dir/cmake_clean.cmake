@@ -1,8 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ProjetoConsoleLinuxSO.dir/main.c.o"
-  "ProjetoConsoleLinuxSO.exe"
+  "ProjetoConsoleLinuxSO"
   "ProjetoConsoleLinuxSO.pdb"
-  "libProjetoConsoleLinuxSO.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

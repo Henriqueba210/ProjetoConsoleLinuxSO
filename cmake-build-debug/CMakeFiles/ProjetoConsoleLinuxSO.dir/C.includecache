@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/cygdrive/c/Projetos/ProjetoConsoleLinuxSO/main.c
+/home/henrique/Documentos/Github/ProjetoConsoleLinuxSO/main.c
 stdio.h
 -
 stdlib.h
