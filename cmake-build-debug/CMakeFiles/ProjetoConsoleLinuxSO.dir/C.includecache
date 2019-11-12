@@ -9,8 +9,14 @@
 /home/henrique/Documentos/Github/ProjetoConsoleLinuxSO/main.c
 stdio.h
 -
+string.h
+-
 stdlib.h
 -
-string.h
+time.h
+-
+stdbool.h
+-
+locale.h
 -
 

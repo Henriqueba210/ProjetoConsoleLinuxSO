@@ -4,127 +4,35 @@ Henrique Barros de Almeida
 Lucas Abrahão
 */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdbool.h>
+#include <locale.h>
 
-struct diretorio {
-    char nomeDiretorio[8];
+struct Diretorio {
+    char nome[8];
     char hora[9];
     char data[9];
-    int diretorioAnterior;
+    int pai;
+
 };
-struct Diretorio diretorio[1024];
-char LinhaDeComando[80];
-char *comando, *parametro, *nomeAtual;
-int posicao_atual = 0, cod_dir = 1, ultimosDiretorios[1024], contadorDiretorios;
+struct Diretorio diretorio[1023];
+char comandoInserido[80] = "";
+char *comando = "", *parametro = "";
+int posicaoAtual = 0, codDir = 1;
+int const rmConst = 9999;
 
-int executarRmdir(char *parametro){
-    if(validarValorDoParametro(parametro) == 1){
-        for(int i = 0; i < cod_dir; i++){
-            if(diretorio[i].pai == posicao_atual && strcmp(diretorio[i].nome, parametro) == 0){
-                diretorio[i].pai = 9999;
-            }
-        }
-    }
-    return 0;
-}
-int executarHelp(){
-    int tipoDuvida;
-    scanf("%i", &tipoDuvida);
-    printf("digite o numero referente ao artigo desejado:\n 1->cd\n 2->ls/ls-l\n 3->pwd\n 4->cls\n 5->mkdir\n 6->rmdir\n  ");
-    switch (tipoDuvida)
-    {
-        case 1:
-            printf("O comando cd serve para acessar e mudar de diret�rio corrente. Ele � utilizado para a navega��o entre as pastas do computador. Exemplo: cd /home/baixaki/Desktop ? Acessa a pasta correspondente � �rea de trabalho do usu�rio baixaki.");
-            break;
-        case 2:
-            printf("Exibe os arquivos que est�o dentro da pasta na qual o usu�rio est� no momento.Para us�-lo basta digitar ls. Existem varia��es, tais como ls -l, com a qual � poss�vel obter informa��es mais detalhadas sobre os arquivos, como permiss�es e tamanho.");
-            break;
-        case 3:
-            printf("Exibe a pasta atual na qual o usu�rio se encontra. Exemplo: Se o usu�rio baixaki digitar cd ~/ e em seguida digitar pwd, o retorno ser� /home/baixaki .");
-            break;
-        case 4:
-            printf("O cls serve para limpar a tela do terminal. O mesmo ocorre quando se pressiona");
-            break;
-        case 5:
-            printf("Enquanto o rmdir remove, este comando cria diret�rios. Exemplo: mkdir DIRETORIO ? A pasta DIRETORIO foi criada no local onde o usu�rio se encontrava.");
-            break;
-        case 6:
-            printf("Este comando tem a fun��o de  remover diret�rios vazios. Exemplo: rmdir TESTE ? Neste exemplo, o diret�rio vazio TESTE foi removido do local onde o usu�rio se encontrava.");
-            break;
-        default:
-            break;
-    }
-    return 0;
-}
-
-int validarValorDoParametro(char *parametro){
-    if(parametro == NULL){
-        printf("Erro parametro nao informado \n");
-        return 0;
-    }else{
-        if(strlen(parametro)>8){
-            printf("Erro parametro informado e maior que 8 caracteres\n");
-            return 0;
-        }else{
-            return 1;
-        }
-    }
-}
-
-int cd(char *parametro){
-    int realizarNavegacao = 0;
-    if(validarValorDoParametro(parametro) == 1){
-        if(strcmp(parametro, "../") == 0){
-            ultimosDiretorios[sizeof(ultimosDiretorios)-1] = 0;
-            contadorDiretorios--;
-            posicao_atual = ultimosDiretorios[contadorDiretorios];
-            realizarNavegacao = 1;
-        }else{
-            for(int i=0; i < cod_dir; i++){
-                if(diretorio[i].pai == posicao_atual && strcmp(diretorio[i].nome, parametro) == 0){
-                    ultimosDiretorios[contadorDiretorios] += posicao_atual;
-                    contadorDiretorios++;
-                    posicao_atual = i;
-                    realizarNavegacao = 1;
-                }
-            }
-        }
-    }
-    if(realizarNavegacao != 1){
-        printf("um erro ocorreu ao navegar\n");
-    }
-    return 0;
-}
-
-void ls(char *parametro){
-    char *hora = "";
-    char *data = "";
-    for(int i=0; i < cod_dir; i++){
-        if(parametro != NULL){
-            if(strcmp(parametro, "-l") != 0){
-                printf("sintaxe do comando ls esta errada\n");
-                break;
-            }
-            data = diretorio[i].data;
-            hora = diretorio[i].hora;
-        }
-        if(diretorio[i].pai == posicao_atual){
-            printf("-rw-----: %s %s %s \n", diretorio[i].nome, data, hora);
-        }
-    }
-}
-
-int validaSePastaExistePeloPai(char *parametro) {
+int checaDiretorioJaExistente(char *parametro) {
     int validadorNomeIgual = 0;
-    for (int i = 0; i < cod_dir; i++) {
-        if (diretorio[i].pai == posicao_atual && strcmp(diretorio[i].nome, parametro) == 0) {
+    for (int i = 0; i < codDir; i++) {
+        if (diretorio[i].pai == posicaoAtual && !strcmp(diretorio[i].nome, parametro)) {
             validadorNomeIgual++;
         }
     }
     if (validadorNomeIgual == 1) {
-        printf("Ja existe uma pasta com esse nome\n");
+        printf("Ja existe um diretorio com esse nome\n");
         return 0;
     } else {
         return 1;
@@ -132,48 +40,211 @@ int validaSePastaExistePeloPai(char *parametro) {
 }
 
 void mkdir(char *parameter) {
-    if (parameter) {
-        if (validaSePastaExistePeloPai(parameter) == 1) {
-            fflush(stdin);
-            strcpy(diretorio[cod_dir].nome, parameter);
-            _strdate(diretorio[cod_dir].data);
-            _strtime(diretorio[cod_dir].hora);
-            diretorio[cod_dir].pai = posicao_atual;
-            cod_dir++;
+    if (checaDiretorioJaExistente(parametro)) {
+        fflush(stdin);
+        strcpy(diretorio[codDir].nome, parameter);
+        struct tm *tm;
+        time_t t;
+        time(&t);
+        tm = localtime(&t);
+        strftime(diretorio[codDir].data, 100, "%m/%d/%Y", tm);
+        strftime(diretorio[codDir].hora, 100, "%H:%M:%S", tm);
+        diretorio[codDir].pai = posicaoAtual;
+        codDir++;
+    }
+}
+
+void rmdir(char *parameter) {
+
+    bool found = false;
+    for (int i = 1; i <= codDir; i++) {
+        if (!strcmp(diretorio[i].nome, parameter) && diretorio[i].pai == posicaoAtual) {
+            bool diretorioPossuiFilhos = false;
+
+            for (int j = 1; j <= codDir; j++) {
+                if (diretorio[j].pai == posicaoAtual + 1 && (posicaoAtual + 1) == i) {
+                    diretorioPossuiFilhos = true;
+                }
+            }
+
+            if (diretorioPossuiFilhos) {
+                printf("falha ao remover %s: Diretório não vazio\n", parameter);
+                return;
+            }
+
+            diretorio[i].pai = rmConst;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        printf("Diretório inexistente.\n");
+    }
+}
+
+void help(int funcao) {
+    switch (funcao) {
+        case 1:
+            printf("Uso: cd [DIRETÓRIO]\n Vai até o diretório indicado caso ele exista.\n");
+            break;
+        case 2:
+            printf("Uso: ls [OPÇÃO]\nLista os Diretórios no diretório atual (caso não seja uitlizada a opção -l, neste caso ele irá mostrar as informaçes sobre os diretoórios também).\n");
+            break;
+        case 3:
+            printf("Mostra o nome do diretório de trabalho atual.");
+            break;
+        case 4:
+            printf("Limpa a tela do terminal.\n");
+            break;
+        case 5:
+            printf("Uso: mkdir [DIRETÓRIO]\nCria o DIRETÓRIO desejado, se ele já não existir.\n");
+            break;
+        case 6:
+            printf("Uso: rmdir [DIRETÓRIO]\nRemove o DIRETÓRIO desejado.\n");
+            break;
+        case 7:
+            printf("Mostra na tela o nome dos integrantes desta tarefa especial.\n");
+            break;
+        default:
+            break;
+    }
+}
+
+void cd(char *param) {
+    if (!strcmp(param, "..") || !strcmp(param, "../")) {
+        if (posicaoAtual > 0) {
+            posicaoAtual--;
+        }
+    } else if (!strcmp(param, "/")) {
+        posicaoAtual = 0;
+    } else {
+        if (codDir == 0) {
+            printf("Diretório inexistente.\n");
+            return;
+        }
+
+        bool found = false;
+
+        for (int i = 1; i <= codDir; i++) {
+            if (strcmp(diretorio[i].nome, param) == 0 && diretorio[i].pai == posicaoAtual) {
+                if (diretorio[i].pai != rmConst) {
+                    posicaoAtual = diretorio[i].pai + 1;
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            printf("Diretório inexistente.\n");
+        }
+    }
+}
+
+void ls(const char *parameter) {
+    char *hora = "";
+    char *data = "";
+    for (int i = 1; i <= codDir; i++) {
+        if (!strcmp(parameter, "") && diretorio[i].pai == posicaoAtual) {
+            printf("%s \n", diretorio[i].nome);
+        } else if (!strcmp(parameter, "-l") && diretorio[i].pai == posicaoAtual) {
+            data = diretorio[i].data;
+            hora = diretorio[i].hora;
+            printf("%s %s %s \n", diretorio[i].nome, data, hora);
         }
     }
 }
 
 
-void comandos(char *funcao, char *parametro) {
-    if (!strcmp(funcao, "mkdir")) {
-        mkdir(parametro);
-
-    } else if (!strcmp(funcao, "ls")) {
-
-    } else if(!strcmp(funcao,"cd")){
-
-    }else if(!strcmp(funcao,"rmdir")){
-
-    }else if(!strcmp(funcao,"pwd")){
-
+void pwd() {
+    if (posicaoAtual > 0) {
+        int indexDir = diretorio[posicaoAtual].pai;
+        for (int i = 0; i < codDir; i++) {
+            if (indexDir != 0) {
+                printf("/%s", diretorio[indexDir].nome);
+                indexDir = diretorio[indexDir].pai;
+            }
+        }
+        printf("/%s$ ", diretorio[posicaoAtual].nome);
     }
+}
+
+void clear() {
+    system("clear");
+}
+
+void about() {
+    printf("-Tarefa especial -\n-Integrantes-\n-Henrique Barros de Almeida-\n-Lucas Abrahão-\n");
+}
 
 
+void comandos(char *funcao, char *parameter) {
+    if (!strcmp(funcao, "mkdir")) {
+        if (!strcmp(parameter, "")) {
+            printf("nome do diretorio não pode ser vazio\n");
+        } else {
+            mkdir(parameter);
+        }
+    } else if (!strcmp(funcao, "ls")) {
+        ls(parameter);
+    } else if (!strcmp(funcao, "cd")) {
+        if (!strcmp(parameter, "")) {
+            printf("nome do diretorio não pode ser vazio\n");
+        } else {
+            cd(parameter);
+        }
+    } else if (!strcmp(funcao, "rmdir")) {
+        if (!strcmp(parameter, "")) {
+            printf("nome do diretorio não pode ser vazio\n");
+        } else {
+            rmdir(parameter);
+        }
+    } else if (!strcmp(funcao, "pwd") && !strcmp(parameter, "")) {
+        pwd();
+    } else if (!strcmp(funcao, "clear") && !strcmp(parameter, "")) {
+        clear();
+    } else if (!strcmp(funcao, "about") && !strcmp(parameter, "")) {
+        about();
+    } else if (!strcmp(funcao, "mkdir") && !strcmp(parameter, "--help")) {
+        help(5);
+    } else if (!strcmp(funcao, "ls") && !strcmp(parameter, "--help")) {
+        help(2);
+    } else if (!strcmp(funcao, "cd") && !strcmp(parameter, "--help")) {
+        help(1);
+    } else if (!strcmp(funcao, "rmdir") && !strcmp(parameter, "--help")) {
+        help(6);
+    } else if (!strcmp(funcao, "pwd") && !strcmp(parameter, "--help")) {
+        help(3);
+    } else if (!strcmp(funcao, "clear") && !strcmp(parameter, "--help")) {
+        help(4);
+    } else if (!strcmp(funcao, "about") && !strcmp(parameter, "--help")) {
+        help(7);
+    } else if (strcmp(funcao, "poweroff")) {
+        printf("comando ou parametro não encontrado\n");
+    }
 }
 
 
 int main() {
-
+    setlocale(LC_ALL, "Portuguese");
+    diretorio[0].nome[0] = '/';
+    struct tm *tm;
+    time_t t;
+    time(&t);
+    tm = localtime(&t);
+    strftime(diretorio[0].data, 100, "%m/%d/%Y", tm);
+    strftime(diretorio[0].hora, 100, "%H:%M:%S", tm);
+    diretorio[0].pai = 0;
+    posicaoAtual = 0;
     system("clear");
-    printf("$ ");
-    gets(LinhaDeComando);
-    while (strcmp(comando,"poweroff"))
-    comando = strtok(LinhaDeComando, "");
-    parametro = strtok(NULL, "\0");
-    comandos(comando, parametro);
-
-
+    while (strcmp(comando, "poweroff")) {
+        printf("$ ");
+        gets(comandoInserido);
+        comando = strtok(comandoInserido, " ");
+        parametro = strtok(NULL, "\0");
+        if (parametro == NULL) {
+            parametro = "";
+        }
+        comandos(comando, parametro);
+    }
     return 0;
-
 }
