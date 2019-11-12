@@ -50,8 +50,8 @@ int inicializarPrograma(){
     printf("Bem vindo ao criador de Diretorios\n");
     comando = "";
     memcpy(diretorio[0].nome, "./", strlen("./")+1);
-    _strdate(diretorio[0].data);
-    _strtime(diretorio[0].hora);
+    strftime(diretorio[0].data);
+    strftime(diretorio[0].hora);
     diretorio[0].pai = 0;
     return 0;
 }
@@ -115,7 +115,7 @@ int executarCd(char *parametro){
                     posicao_atual = i;
                     realizarNavegacao = 1;
                 }
-            }       
+            }
         }
     }
     if(realizarNavegacao != 1){
@@ -159,7 +159,7 @@ int executarHelp(){
         break;
     default:
         break;
-    }                   
+    }
     return 0;
 }
 
@@ -178,7 +178,7 @@ int main (){
         if(strcmp(comando, "ls")==0){
             executarLs(parametro);
             comandoExistente = 1;
-        }        
+        }
         if(strcmp(comando, "cd")==0){
             executarCd(parametro);
             comandoExistente = 1;
